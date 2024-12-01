@@ -84,8 +84,78 @@ func partOne() {
 
 }
 
+func partTwo() {
+	var wd, err = os.Getwd()
+	if err != nil {
+		fmt.Println("Error getting working directory:", err)
+		return
+	}
+
+	filePath := wd + "/src/days/day-1/input.txt"
+	file, err := os.Open(filePath)
+	if err != nil {
+		fmt.Printf("Can't open the file %s: %v\n", filePath, err)
+		return
+	}
+	defer file.Close()
+
+	var leftArr []int64
+	var rightMap = map[int64]int64{}
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+
+		splits := strings.Fields(line)
+		if len(splits) != 2 {
+			fmt.Printf("Invalid line format: %s\n", line)
+			continue
+		}
+
+		leftVal, err := strconv.ParseInt(splits[0], 10, 64)
+		if err != nil {
+			fmt.Printf("Error parsing left value in line '%s': %v\n", line, err)
+			continue
+		}
+
+		rightVal, err := strconv.ParseInt(splits[1], 10, 64)
+		if err != nil {
+			fmt.Printf("Error parsing right value in line '%s': %v\n", line, err)
+			continue
+		}
+
+		leftArr = append(leftArr, leftVal)
+
+		var count, ok = rightMap[rightVal]
+		if ok {
+			rightMap[rightVal] = count + 1
+		} else {
+			rightMap[rightVal] = 1
+		}
+
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Println("Error reading the file:", err)
+	}
+
+	var result int64
+
+	for _, left := range leftArr {
+		result += left * rightMap[left]
+	}
+
+	fmt.Println("result: ", result)
+
+}
+
 func main() {
 	fmt.Println("Running")
-	partOne()
+	// partOne()
+	partTwo()
 
 }
