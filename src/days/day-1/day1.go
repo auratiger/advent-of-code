@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func partOne() {
@@ -155,7 +156,14 @@ func partTwo() {
 
 func main() {
 	fmt.Println("Running")
+
+	var start = time.Now()
+
 	// partOne()
 	partTwo()
+
+	var end = time.Since(start)
+
+	fmt.Println("Execution time: ", end.Seconds())
 
 }
