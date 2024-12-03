@@ -55,6 +55,49 @@ func partOne() {
 }
 
 func partTwo() {
+	wd, _ := os.Getwd()
+	filePath := wd + "/src/days/day-3/input.txt"
+	file, err := os.Open(filePath)
+	if err != nil {
+		fmt.Println("Can't open file")
+	}
+	defer file.Close()
+
+	scanner, _ := os.ReadFile(filePath)
+	str := string(scanner)
+
+	var result uint64 = 0
+
+	// fmt.Println(str)
+
+	r, _ := regexp.Compile("mul\\((\\d{1,3}),(\\d{1,3})\\)|do\\(\\)|don't\\(\\)")
+
+	res := r.FindAllStringSubmatch(str, 2000)
+
+	fmt.Println(res)
+
+	isEnabled := true
+
+	for _, val := range res {
+
+		symbol := val[0]
+
+		if symbol == "do()" {
+			isEnabled = true
+		} else if symbol == "don't()" {
+			isEnabled = false
+		} else {
+			if isEnabled {
+				left, _ := strconv.ParseUint(val[1], 10, 64)
+				right, _ := strconv.ParseUint(val[2], 10, 64)
+
+				result += left * right
+			}
+		}
+
+	}
+
+	fmt.Println("Safe reporst: ", result)
 
 }
 
@@ -63,8 +106,8 @@ func main() {
 
 	var start = time.Now()
 
-	partOne()
-	// partTwo()
+	// partOne()
+	partTwo()
 
 	var end = time.Since(start)
 
