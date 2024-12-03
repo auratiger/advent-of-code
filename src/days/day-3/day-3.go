@@ -5,6 +5,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -101,13 +102,66 @@ func partTwo() {
 
 }
 
+func partOneNoRegex() {
+
+	wd, _ := os.Getwd()
+	filePath := wd + "/src/days/day-3/input.txt"
+	content, _ := os.ReadFile(filePath)
+	str := string(content)
+
+	split := strings.Split(str, "mul")
+
+	result := 0
+
+	for _, val := range split {
+		if val[0] != '(' {
+			continue
+		}
+
+		hasClosingBracket := strings.IndexByte(val, ')')
+
+		if hasClosingBracket == -1 {
+			continue
+		}
+
+		vars := val[:hasClosingBracket]
+		varsSplit := strings.Split(vars[1:], ",")
+
+		if len(varsSplit) != 2 {
+			fmt.Println("split not 2", varsSplit)
+			continue
+		}
+
+		leftVar, err := strconv.Atoi(varsSplit[0])
+
+		if err != nil {
+			fmt.Println("left not int: ", leftVar)
+			continue
+		}
+
+		rigthVar, err := strconv.Atoi(varsSplit[1])
+
+		if err != nil {
+			fmt.Println("rigth not int: ", rigthVar)
+			continue
+		}
+
+		result += leftVar * rigthVar
+
+	}
+
+	fmt.Println("result: ", result)
+
+}
+
 func main() {
 	fmt.Println("Running")
 
 	var start = time.Now()
 
 	// partOne()
-	partTwo()
+	// partTwo()
+	partOneNoRegex()
 
 	var end = time.Since(start)
 
