@@ -91,8 +91,73 @@ func hasMas(arr *[]string, y, yLen, x, xLen int, dir *[2]int) bool {
 	return true
 }
 
+var directions2 = [4][2]int{
+	{1, 1},   // Diagonal down-right
+	{-1, 1},  // Diagonal up-right
+	{-1, -1}, // Diagonal up-left
+	{1, -1},  // Diagonal down-left
+}
+
+func findXMas(arr *[]string, y, x int) bool {
+	count := 0
+
+	for _, dir := range directions2 {
+
+		totalY := y + dir[0]
+		totalX := x + dir[1]
+
+		totalYReverse := y + dir[0]*-1
+		totalXReverse := x + dir[1]*-1
+
+		if (*arr)[totalY][totalX] == 'M' && (*arr)[totalYReverse][totalXReverse] == 'S' {
+			count++
+		}
+	}
+
+	return count == 2
+}
+
 func partTwo() {
 
+	wd, _ := os.Getwd()
+	filePath := wd + "/src/days/day-4/input.txt"
+	file, _ := os.Open(filePath)
+
+	scan := bufio.NewScanner(file)
+
+	var arr []string
+
+	for scan.Scan() {
+		line := strings.TrimSpace(scan.Text())
+		arr = append(arr, line)
+	}
+
+	result := 0
+
+	yLen, xLen := len(arr), len(arr[0])
+
+	for y, val := range arr {
+
+		if y == 0 || y == yLen-1 {
+			continue
+		}
+
+		for x, letter := range val {
+
+			if x == 0 || x == xLen-1 {
+				continue
+			}
+
+			if letter == 'A' {
+				hasMas := findXMas(&arr, y, x)
+				if hasMas {
+					result += 1
+				}
+			}
+		}
+	}
+
+	fmt.Println("result: ", result)
 }
 
 func main() {
@@ -100,7 +165,8 @@ func main() {
 
 	var start = time.Now()
 
-	partOne()
+	// partOne()
+	partTwo()
 
 	var end = time.Since(start)
 
