@@ -81,19 +81,35 @@ func partOne() {
 
 }
 
-func fixArr(lineArr *[]string, i int, matchArr *[]int) {
+func fixArr(lineArr *[]int, i int, matchArr *[]int) {
 
-	temp, _ := strconv.Atoi((*lineArr)[i])
-	for index := i - 1; index >= 0; index-- {
-		val, _ := strconv.Atoi((*lineArr)[index])
+	temp := (*lineArr)[i]
+
+	(*lineArr)[i] = (*lineArr)[i-1]
+	(*lineArr)[i-1] = temp
+
+	for index := i - 2; index >= 0; index-- {
+		val := (*lineArr)[index]
 
 		if slices.Contains(*matchArr, val) {
-			(*lineArr)[index] = strconv.Itoa(temp)
-			(*lineArr)[index+1] = strconv.Itoa(val)
+			(*lineArr)[index] = temp
+			(*lineArr)[index+1] = val
 		}
 
 	}
 
+}
+
+func stringsToIntegers(lines []string) ([]int, error) {
+	integers := make([]int, 0, len(lines))
+	for _, line := range lines {
+		n, err := strconv.Atoi(line)
+		if err != nil {
+			return nil, err
+		}
+		integers = append(integers, n)
+	}
+	return integers, nil
 }
 
 func partTwo() {
@@ -123,28 +139,28 @@ func partTwo() {
 	}
 
 	result := 0
-
 	hasFailed := false
 
 	for scanner.Scan() {
 		hasFailed = false
 		line := strings.TrimSpace(scanner.Text())
 		lineArr := strings.Split(line, ",")
+		parsedLineArr, err := stringsToIntegers(lineArr)
 
-		for i, val := range lineArr {
+		if err != nil {
+			fmt.Println("parsing the array to integers has failed: ", err)
+		}
 
-			parsedVal, _ := strconv.Atoi(val)
-			matchArr, ok := m[parsedVal]
+		for i, val := range parsedLineArr {
+
+			matchArr, ok := m[val]
 
 			if ok {
 				for _, xVal := range matchArr {
-					checkString := lineArr[:i]
+					checkRules := parsedLineArr[:i]
 
-					parsedXVal := strconv.Itoa(xVal)
-
-					if slices.Contains(checkString, parsedXVal) {
-						// fmt.Println("fail: ", lineArr, parsedVal)
-						fixArr(&lineArr, i, &matchArr)
+					if slices.Contains(checkRules, xVal) {
+						fixArr(&parsedLineArr, i, &matchArr)
 						hasFailed = true
 						break
 					}
@@ -153,12 +169,9 @@ func partTwo() {
 
 		}
 
-		// fmt.Println("wha happen: ", lineArr)
-
 		if hasFailed {
-			temp := (len(lineArr)) / 2
-			// fmt.Println("temp: ", temp, lineArr)
-			val, _ := strconv.Atoi(lineArr[temp])
+			temp := (len(parsedLineArr)) / 2
+			val := parsedLineArr[temp]
 			result += val
 		}
 
